@@ -13,10 +13,10 @@
 #' @references Eurofins Agro (2013). Formules om OS-balans te berekenen voor NLV. Extension made by Hanegraaf & Bussink (2007) Schatting afbraaksnelheid organische stof. Vertaling van empirisch onderzoek naar nieuwe vuistregels - update 2007. NMI report B112.08, 15 pp.
 #'
 #' @export
-omb_eurofins <- function(A_SOM_LOI = NA, A_C_OF = NA, A_N_RT = NA, A_PH_CC = NA, A_N_PMN = NA, duration = 10) {
+omb_eurofins <- function(B_SOILTYPE_AGR, A_SOM_LOI = NA, A_C_OF = NA, A_N_RT = NA, A_PH_CC = NA, A_N_PMN = NA, duration = 10) {
 
   # add visual bindings
-  cosfr = iagefr = temp = cor_temp = NULL
+  cosfr = iagefr = temp = cor_temp = iage = NULL
 
   # Check inputs
   checkmate::assert_numeric(A_SOM_LOI, lower = 0, upper = 100)
@@ -39,10 +39,10 @@ omb_eurofins <- function(A_SOM_LOI = NA, A_C_OF = NA, A_N_RT = NA, A_PH_CC = NA,
                    value = NA_real_)
 
   # set C-OS fraction dependent on soil type
-  dt[B_SOILTEPE_AGR =='loess',cosfr := 0.44]
-  dt[B_SOILTEPE_AGR %in% c("moerige_klei", "veen"),cosfr := 0.50]
-  dt[B_SOILTEPE_AGR %in% c("rivierklei", "maasklei"),cosfr := 0.41]
-  dt[B_SOILTEPE_AGR =='zeeklei',cosfr := 0.46]
+  dt[B_SOILTYPE_AGR =='loess',cosfr := 0.44]
+  dt[B_SOILTYPE_AGR %in% c("moerige_klei", "veen"),cosfr := 0.50]
+  dt[B_SOILTYPE_AGR %in% c("rivierklei", "maasklei"),cosfr := 0.41]
+  dt[B_SOILTYPE_AGR =='zeeklei',cosfr := 0.46]
   dt[is.na(cosfr), cosfr := 0.58]
 
   # add soil dependent correctionfactor for the initial age
@@ -50,7 +50,7 @@ omb_eurofins <- function(A_SOM_LOI = NA, A_C_OF = NA, A_N_RT = NA, A_PH_CC = NA,
   dt[is.na(iagefr),iagefr := 1]
 
   # set initial age
-  dt[,iage := fifelse(B_SOILTEPE_AGR == 'duinzand',12.5,17) * iagefr]
+  dt[,iage := fifelse(B_SOILTYPE_AGR == 'duinzand',12.5,17) * iagefr]
 
   # set the anual temperature
   dt[, temp := 14]
