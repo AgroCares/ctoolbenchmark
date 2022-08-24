@@ -13,7 +13,7 @@
 omb_janssen <- function(A_SOM_LOI = NA, A_C_OF = NA, iage = 10, duration = 10) {
 
   # add visual bindings
-  temp = cor_temp = cdec = NULL
+  temp = cor_temp = NULL
 
   # Check inputs
   checkmate::assert_numeric(A_SOM_LOI, lower = 0, upper = 100)
@@ -37,12 +37,9 @@ omb_janssen <- function(A_SOM_LOI = NA, A_C_OF = NA, iage = 10, duration = 10) {
   dt[, cor_temp := ifelse(temp<=-1,0,ifelse(temp<=9,0.1*(temp+1),ifelse(temp<=27,2^((temp-9)/9),4)))]
 
   # estimate the carbon decomposition in 10 years
-  dt[, cdec := A_C_OF * (1-exp(4.7*(((iage+cor_temp*duration)^-0.6)-(iage^-0.6))))/duration]
+  dt[, value := A_C_OF * (1-exp(4.7*(((iage+cor_temp*duration)^-0.6)-(iage^-0.6))))/duration]
 
-  # estimate the carbon concentration
-  dt[, value := A_C_OF - cdec]
-
-  # return value for C concentration (g C / kg soil)
+  # return value for C decomposition (g C / kg soil)
   value <- dt[, value]
 
   # return value
