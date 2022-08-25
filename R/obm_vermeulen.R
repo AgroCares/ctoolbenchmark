@@ -1,4 +1,4 @@
-' Calculate the mean decomposition rate of Soil Organic Matter
+#' Calculate the mean decomposition rate of Soil Organic Matter
 #'
 #' @param A_SOM_LOI (numeric) The percentage organic matter in the soil (\%).
 #' @param A_C_OF (numeric) The carbon content of the soil (g / kg).
@@ -7,10 +7,16 @@
 #'
 #' @import data.table
 #'
-#' @references Vermeulen & Henriks (1996).Bepaling van afbraaksnelheden van organische stof in laagveen: ademhalingsmetingen aan ongestoorde veenmonsters in het laboratorium. DLO-Staring centrum, Wageningen, Rapport 288, 99 pp.
+#' @references Vermeulen & Hendriks (1996).Bepaling van afbraaksnelheden van organische stof in laagveen: ademhalingsmetingen aan ongestoorde veenmonsters in het laboratorium. DLO-Staring centrum, Wageningen, Rapport 288, 99 pp.
 #'
 #' @export
 omb_vermeulen <- function(A_SOM_LOI = NA_real_, A_C_OF = NA_real_, A_N_RT = NA_real_, duration = 10) {
+
+  # add visual bindings
+  A_CN_FR = NULL
+
+  # extend A_C_OF when input is missing
+  if(length(A_C_OF)==1 & is.na(A_C_OF[1])){A_C_OF <- rep(A_C_OF,length(A_SOM_LOI))}
 
   # Check inputs
   arg.length <- max(length(A_SOM_LOI), length(A_C_OF), length(A_N_RT))
@@ -25,13 +31,13 @@ omb_vermeulen <- function(A_SOM_LOI = NA_real_, A_C_OF = NA_real_, A_N_RT = NA_r
                    A_N_RT = A_N_RT * 0.001,
                    value = NA_real_)
 
-  # estimate the CN ratio, and set the applicability range (see Vermeulen & Hendriks)
-  dt[, A_CN_FR := A_C_OF / A_N_RT]
-  dt[, A_CN_FR := pmin(pmax(A_CN_FR,10),55)]
-
   # estimate carbon content (g/kg) from SOM (%) if only SOM is given
   # assuming that 50% of SOM consists of carbon (Pribyl, 2010)
   dt[is.na(A_C_OF), A_C_OF := A_SOM_LOI * 0.5 * 10]
+
+  # estimate the CN ratio, and set the applicability range (see Vermeulen & Hendriks)
+  dt[, A_CN_FR := A_C_OF / A_N_RT]
+  dt[, A_CN_FR := pmin(pmax(A_CN_FR,10),55)]
 
   # estimate the averaged annual carbon decomposition (g C kg-1 year-1), based on duration of (default) 10 years
   dt[, value := A_C_OF * (1 - exp(-1 * (0.016 - 0.00021 * A_C_OF / A_N_RT) * duration)) / duration]
