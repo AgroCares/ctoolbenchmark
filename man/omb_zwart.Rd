@@ -4,7 +4,7 @@
 \alias{omb_zwart}
 \title{Calculate the mean decomposition rate of Soil Organic Matter}
 \usage{
-omb_zwart(A_SOM_LOI = NA, A_C_OF = NA, A_CLAY_MI = 5)
+omb_zwart(A_SOM_LOI = NA_real_, A_C_OF = NA_real_, A_CLAY_MI = 5)
 }
 \arguments{
 \item{A_SOM_LOI}{(numeric) The percentage organic matter in the soil (\%).}

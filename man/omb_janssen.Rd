@@ -4,7 +4,7 @@
 \alias{omb_janssen}
 \title{Calculate the mean decomposition rate of Soil Organic Matter}
 \usage{
-omb_janssen(A_SOM_LOI = NA, A_C_OF = NA, iage = 10, duration = 10)
+omb_janssen(A_SOM_LOI = NA_real_, A_C_OF = NA_real_, iage = 10, duration = 10)
 }
 \arguments{
 \item{A_SOM_LOI}{(numeric) The percentage organic matter in the soil (\%).}

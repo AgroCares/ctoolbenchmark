@@ -10,14 +10,18 @@
 #' @references Janssen (1984) A simple method for calculating decomposition and accumulation of 'young' soil organic matter. Plant & Soil 76, 297-304.
 #'
 #' @export
-omb_janssen <- function(A_SOM_LOI = NA, A_C_OF = NA, iage = 10, duration = 10) {
+omb_janssen <- function(A_SOM_LOI = NA_real_, A_C_OF = NA_real_, iage = 10, duration = 10) {
 
   # add visual bindings
   temp = cor_temp = NULL
 
+  # extend A_C_OF when input is missing
+  if(length(A_C_OF)==1 & is.na(A_C_OF[1])){A_C_OF <- rep(A_C_OF,length(A_SOM_LOI))}
+
   # Check inputs
-  checkmate::assert_numeric(A_SOM_LOI, lower = 0, upper = 100)
-  checkmate::assert_numeric(A_C_OF, lower = 0, upper = 1000)
+  arg.length <- max(length(A_SOM_LOI), length(A_C_OF))
+  checkmate::assert_numeric(A_SOM_LOI, lower = 0, upper = 100,len = arg.length)
+  checkmate::assert_numeric(A_C_OF, lower = 0, upper = 1000, len = arg.length)
   checkmate::assert_numeric(iage, lower = 1, upper = 100)
   checkmate::assert_numeric(duration, lower = 1, upper = 100)
 
